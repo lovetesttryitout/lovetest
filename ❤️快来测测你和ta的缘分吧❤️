@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>❤️ 缘分测试 ❤️</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; padding: 20px; background-color: #f9f9f9; }
+    h1 { color: #e64340; }
+    input { padding: 10px; margin: 10px; width: 80%; max-width: 300px; border: 1px solid #ddd; border-radius: 5px; }
+    button { background-color: #e64340; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; }
+    .result { margin-top: 20px; font-size: 20px; color: #333; }
+    .comment { color: #e64340; font-weight: bold; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <h1>❤️ 你和TA的缘分测试 ❤️</h1>
+  <input id="name1" placeholder="你的名字" />
+  <input id="name2" placeholder="TA的名字" />
+  <button onclick="calculateMatch()">立即测试</button>
+  <div id="result" class="result"></div>
+
+  <!-- 添加 Firebase SDK -->
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+    import { getFirestore } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-analytics.js";
+
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyCNag3wKUwM5QS5wZ8wKVeYb837ybANVvc",
+      authDomain: "lovetest-1803d.firebaseapp.com",
+      projectId: "lovetest-1803d",
+      storageBucket: "lovetest-1803d.firebasestorage.app",
+      messagingSenderId: "439322517265",
+      appId: "1:439322517265:web:e16d2f7040a25c31e736b0",
+      measurementId: "G-30G2PHD3H0"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const analytics = getAnalytics(app);
+
+    function calculateMatch() {
+      const name1 = document.getElementById('name1').value;
+      const name2 = document.getElementById('name2').value;
+      if (!name1 || !name2) {
+        alert('请填写两个名字');
+        return;
+      }
+
+      // 随机生成百分比（60-100）
+      const percent = Math.floor(Math.random() * 40) + 60;
+
+      // 根据百分比选择评语
+      const comments = [
+        '天作之合！快去表白吧！',
+        '心有灵犀一点通~',
+        '友情以上恋人未满',
+        '还需要多多了解哦'
+      ];
+      const comment = percent >= 90 ? comments[0] :
+                      percent >= 80 ? comments[1] :
+                      percent >= 70 ? comments[2] :
+                      comments[3];
+
+      // 显示结果
+      document.getElementById('result').innerHTML = `
+        ${name1}与${name2}的匹配度是：${percent}%<br>
+        <div class="comment">${comment}</div>
+      `;
+
+      // 将结果保存到 Firestore
+      db.collection("results").add({
+        name1: name1,
+        name2: name2,
+        percent: percent,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    }
+  </script>
+</body>
+</html>
